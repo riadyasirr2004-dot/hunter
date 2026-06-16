@@ -1,9 +1,9 @@
 name: TikTok Username Hunter 24/7
 
 on:
-  workflow_dispatch: # تشغيل يدوي بضغطة زر
+  workflow_dispatch:
   schedule:
-    - cron: '*/5 * * * *' # يعيد تشغيل نفسه تلقائياً كل 5 دقائق للصيد المستمر
+    - cron: '*/5 * * * *'
 
 jobs:
   hunt:
@@ -33,17 +33,16 @@ jobs:
             if u.startswith('_') or u.endswith('_'): return gen()
             return u, l
             
-        # فحص مكثف وسريع لـ 150 يوزر في المرة الواحدة لمنع حظر السيرفر
-        print('🚀 بدأ الفحص السحابي الذكي...')
+        print('🚀 Hunter Started Successfully...')
         for _ in range(150):
             user, length = gen()
             try:
                 r = requests.get(f'https://tiktok.com@{user}', headers={'User-Agent': 'Mozilla/5.0'}, timeout=5)
                 if r.status_code == 404:
-                    print(f'[🟢 متاح] -> {user}')
+                    print(f'[🟢 Available] -> {user}')
                     requests.post(f'https://telegram.org{TOKEN}/sendMessage', json={'chat_id': CHAT_ID, 'text': f'🔥 تم صيد يوزر تيك توك متاح!\n🎯 النوع: {\"👑 ثلاثي\" if length == 3 else \"⚡ رباعي\"}\n👤 اليوزر: @{user}\n🤖 رابط الحجز: https://tiktok.com@{user}'})
                 else:
-                    print(f'[🔴 مأخوذ] -> {user}')
+                    print(f'[🔴 Taken] -> {user}')
             except: pass
             time.sleep(0.3)
         "
