@@ -21,11 +21,18 @@ jobs:
       run: pip install requests
 
     - name: Start Hunting Smart
+      env:
+        TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+        CHAT_ID: ${{ secrets.CHAT_ID }}
       run: |
         python -c "
-        import time, requests, random, string
-        TOKEN = '8526040045:AAEzHONijI1IezTLNsYRMMadARh5BD-hYr0'
-        CHAT_ID = '-1004337788630'
+        import time, requests, random, string, os
+        TOKEN = os.environ['TOKEN']
+        CHAT_ID = os.environ['CHAT_ID']
+        
+        try:
+            requests.post(f'https://api.telegram.org/bot{TOKEN}/sendMessage', json={'chat_id': CHAT_ID, 'text': '🟢 Hunter connected to Telegram successfully!'})
+        except: pass
         
         def gen():
             l = random.choice([3, 4])
@@ -33,16 +40,13 @@ jobs:
             if u.startswith('_') or u.endswith('_'): return gen()
             return u, l
             
-        print('🚀 Hunter Started Successfully...')
         for _ in range(150):
             user, length = gen()
             try:
-                r = requests.get(f'https://tiktok.com@{user}', headers={'User-Agent': 'Mozilla/5.0'}, timeout=5)
+                r = requests.get(f'https://www.tiktok.com/@{user}', headers={'User-Agent': 'Mozilla/5.0'}, timeout=5)
                 if r.status_code == 404:
-                    print(f'[🟢 Available] -> {user}')
-                    requests.post(f'https://telegram.org{TOKEN}/sendMessage', json={'chat_id': CHAT_ID, 'text': f'🔥 تم صيد يوزر تيك توك متاح!\n🎯 النوع: {\"👑 ثلاثي\" if length == 3 else \"⚡ رباعي\"}\n👤 اليوزر: @{user}\n🤖 رابط الحجز: https://tiktok.com@{user}'})
-                else:
-                    print(f'[🔴 Taken] -> {user}')
+                    msg = f'🔥 New TikTok Username Found!\n\n🎯 Type: {\"👑 3-Chars\" if length == 3 else \"⚡ 4-Chars\"}\n👤 User: @{user}\n\n🤖 Link: https://www.tiktok.com/@{user}'
+                    requests.post(f'https://api.telegram.org/bot{TOKEN}/sendMessage', json={'chat_id': CHAT_ID, 'text': msg})
             except: pass
             time.sleep(0.3)
         "
