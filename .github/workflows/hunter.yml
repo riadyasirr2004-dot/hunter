@@ -1,0 +1,47 @@
+name: TikTok Username Hunter 24/7
+
+on:
+  workflow_dispatch:
+
+jobs:
+  hunt:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install Dependencies
+      run: pip install requests
+
+    - name: Start Hunting 24/7
+      run: |
+        python -c "
+        import time, requests, random, string
+        TOKEN = '8526040045:AAEzHONijI1IezTLNsYRMMadARh5BD-hYr0'
+        CHAT_ID = '-1004337788630'
+        
+        requests.post(f'https://telegram.org{TOKEN}/sendMessage', json={'chat_id': CHAT_ID, 'text': '🎯 صياد جيت هاب الخارق انطلق الآن بضغطة زر وبدأ الفحص المستمر!'})
+        
+        def gen():
+            l = random.choice([3, 4])
+            u = ''.join(random.choice(string.ascii_lowercase + string.digits + '_') for _ in range(l))
+            if u.startswith('_') or u.endswith('_'): return gen()
+            return u, l
+            
+        while True:
+            user, length = gen()
+            try:
+                r = requests.get(f'https://tiktok.com@{user}', headers={'User-Agent': 'Mozilla/5.0'}, timeout=5)
+                if r.status_code == 404:
+                    print(f'[🟢 Available] -> {user}')
+                    requests.post(f'https://telegram.org{TOKEN}/sendMessage', json={'chat_id': CHAT_ID, 'text': f'🔥 تم صيد يوزر تيك توك متاح!\n🎯 النوع: {\"👑 ثلاثي\" if length == 3 else \"⚡ رباعي\"}\n👤 اليوزر: @{user}\n🤖 رابط الحجز: https://tiktok.com@{user}'})
+                else:
+                    print(f'[🔴 Taken] -> {user}')
+            except: pass
+            time.sleep(1.2)
+        "
